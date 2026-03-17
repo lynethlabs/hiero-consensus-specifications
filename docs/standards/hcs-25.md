@@ -290,9 +290,11 @@ If an adapter is not applicable to a subject, it MUST NOT contribute to the scor
 
 For each applicable adapter, an implementation MUST determine how it participates in the composite denominator. This standard defines three contribution modes:
 
-- `universal`: included in the denominator for all applicable subjects; if the adapter produces no output for an applicable subject, it contributes a deterministic `0` using `defaultComponentKey`.
-- `scoped`: included in the denominator only when it is applicable (as determined by applicability rules); if it is applicable but produces no output, it contributes a deterministic `0` using `defaultComponentKey`.
-- `conditional` (default): included in the denominator only when it produces an output map (i.e., at least one component).
+- `universal`: the adapter is intended to apply to every subject in the scoring scope (no registry/protocol allow-list or deny-list). For every applicable subject, the adapter is included in the denominator; if it produces no output, it contributes a deterministic `0` using `defaultComponentKey`. Use when the metric is a baseline requirement for all subjects (e.g., availability for runtime endpoints).
+- `scoped`: the adapter applies only to a subset of subjects (e.g., specific registries or protocols, per applicability rules). For each applicable subject, the adapter is included in the denominator; if it produces no output, it contributes a deterministic `0` using `defaultComponentKey`. Use when the metric is required only within certain ecosystems (e.g., marketplace performance for ACP registries).
+- `conditional` (default): included in the denominator only when the adapter produces an output map (i.e., at least one component). Use for ecosystem-dependent or sparse signals where missing data should not penalize the subject.
+
+For aggregation, `universal` and `scoped` have the same denominator rule: when an adapter is applicable, it is always in the denominator (with 0 if no output). The difference is only in how applicability is defined: broad (universal) vs narrow (scoped).
 
 Implementations SHOULD use `universal` or `scoped` for in-scope requirements that should penalize missingness (e.g., protocol compliance checks). Implementations SHOULD use `conditional` for ecosystem-dependent signals that are sparse or unevenly available.
 
@@ -499,10 +501,10 @@ This methodology separates:
 - **signal collection** (heterogeneous and potentially expensive) from
 - **score computation** (deterministic and explainable).
 
-The contribution modes plus component non-scorable omission lets ecosystems choose between:
+The contribution modes plus component non-scorable omission let ecosystems choose between:
 
-- penalizing missingness for in-scope requirements (`always` + missing→0); and
-- avoiding bias against subjects where a signal is structurally unavailable (`onlyWhenPresent` and/or omit non-scorable components).
+- penalizing missingness for in-scope requirements (`universal` or `scoped` + missing→0); and
+- avoiding bias against subjects where a signal is structurally unavailable (`conditional` and/or omit non-scorable components).
 
 ## Backwards Compatibility
 
