@@ -22,6 +22,10 @@ Stored in `subject.metadata.erc8004FeedbackSummary`:
 | `registry` | string | Registry identifier |
 | `network` | string | Network identifier |
 | `updatedAt` | ISO timestamp | Refresh time |
+| `status` | `ok` \| `missing` \| `error` | Signal status (HCS-25 canonical). Omit only if inferrable: absent object ⇒ `missing`; present with valid numeric fields ⇒ `ok`. |
+| `sources` | string[] | Optional provenance (e.g., chain id, contract address). |
+
+**Status and provenance:** Implementations MUST assign a canonical status when producing this signal. If the summary object is absent for the subject, the signal status is `missing`. If the object is present and `averageScore`/`totalFeedbacks` are valid, status is typically `ok`; use `error` when ingestion failed or data is invalid. Provenance (e.g., `updatedAt`, optional `sources`) SHOULD be stored so consumers can interpret freshness.
 
 ## Production example (Registry Broker; informative)
 
