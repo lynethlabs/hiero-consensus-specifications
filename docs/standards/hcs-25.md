@@ -472,10 +472,14 @@ If present, a conforming implementation SHOULD compute confidence deterministica
 trustConfidence = (Σ (w(a) * c(a))) / (Σ w(a))
 ```
 
-Where `c(a) ∈ [0,1]` is an adapter confidence derived from:
+where the sum is over the same adapter set `A_denominator` used for the composite score. Adapters that are applicable but not in the denominator (e.g., `conditional` adapters that produced no output) MUST NOT be included in this sum unless the implementation defines a separate confidence breakdown that includes them.
+
+`c(a) ∈ [0,1]` is an adapter confidence derived from:
 
 - fraction of `ok` components vs missing/unavailable; and
 - freshness of signal provenance (`fetchedAt`) if present.
+
+If an adapter produced no components (empty component set after non-scorable omission), `c(a)` MUST be treated as `0`. If `A_denominator` is empty, `trustConfidence` is undefined and SHOULD NOT be emitted, or MAY be emitted as `0`.
 
 Confidence MUST NOT be used to alter the numeric trust score unless explicitly specified in configuration, and MUST be reported separately from `trustScores.total`.
 
