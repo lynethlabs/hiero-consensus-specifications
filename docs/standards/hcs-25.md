@@ -104,7 +104,7 @@ Implementations and consumers SHOULD interpret HCS-25 outputs as:
 - **Derived and versioned**: the output depends on adapter logic, weights, applicability rules, and scoring configuration version.
 - **Decision support**: scores are informative inputs and SHOULD be used alongside additional controls (e.g., policy checks, provenance, manual review, or domain-specific safeguards).
 
-Implementations MUST NOT treat an HCS-25 score as a sole authoritative basis for irreversible gating, enforcement, or exclusion decisions.
+Implementations SHOULD NOT treat an HCS-25 score as a sole authoritative basis for irreversible gating, enforcement, or exclusion decisions.
 
 ## Terminology
 
