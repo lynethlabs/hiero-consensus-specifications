@@ -410,7 +410,7 @@ The output of `normalize_k` MUST be a tuple:
 An implementation MUST apply the following rules:
 
 1. If a component’s status is `ok`, its `value` MUST be used as-is.
-2. If a component’s status is `stale`, its `value` MUST be multiplied by a **staleness multiplier** `m_stale ∈ [0,1]`. If `m_stale` is not configured, it MUST default to `1`.
+2. If a component’s status is `stale`, its `value` MUST be multiplied by a **staleness multiplier** `m_stale ∈ [0,1]`. If `m_stale` is not configured, it MUST default to `1`. Implementations that wish to penalize stale data SHOULD set `m_stale < 1` (e.g., linear decay by age or a fixed factor such as `0.5`); the default of `1` preserves backward compatibility and allows ecosystems to opt in to staleness penalties explicitly.
 3. If a component’s status is `missing`, `timeout`, or `error`, its `value` MUST be `0`, unless the adapter explicitly specifies that the component is **non-scorable** when unavailable.
 
 If a component is non-scorable when unavailable, it MUST be omitted from the adapter’s component set for aggregation, and MUST be reported as unavailable in the breakdown.
