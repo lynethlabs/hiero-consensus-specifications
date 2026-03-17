@@ -347,6 +347,16 @@ Signal adapters MUST assign one of the following status codes:
 
 Implementations MAY add more detailed status information but MUST be mappable to the above.
 
+##### Extended status mapping
+
+If a signal uses an extended status outside the five codes above, the implementation MUST deterministically map it to one of the five codes for scoring and confidence computations.
+
+Unless explicitly overridden by scoring configuration, the following mappings MUST apply:
+
+- `low-coverage` MUST map to `stale` (data exists but is not sufficiently representative to be treated as fully fresh).
+- `upstream-error` MUST map to `error`.
+- Any other extended status token MUST map to `error`.
+
 #### Signal Provenance
 
 When available, a signal SHOULD include provenance, such as:
