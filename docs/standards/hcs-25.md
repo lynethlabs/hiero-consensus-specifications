@@ -539,44 +539,48 @@ The following test vectors are illustrative and intended to validate determinist
 
 ### Test Vector 1: Missingness Penalized (Scoped Contribution)
 
+Uses the same adapter set as the [example configuration](#appendix-a-example-configuration-informative): separate `simple-math` and `simple-science` adapters.
+
 **Configuration (C):**
 
 - Adapters (all applicable) use `contributionMode: scoped`:
   - `availability` (`weight = 1`), components: `availability.uptime`
-  - `simple_evals` (`weight = 2`), components: `simple_evals.math`, `simple_evals.science`
-  - `reputation` (`weight = 1`), components: `reputation.stars`
+  - `simple-math` (`weight = 0.5`), components: `simple-math.score`
+  - `simple-science` (`weight = 0.5`), components: `simple-science.score`
+  - `oss-popularity` (`weight = 1`), components: `oss-popularity.stars`
 - Stale multiplier: `m_stale = 1`
 
 **Snapshot (S) produces components (already normalized):**
 
 - `availability.uptime = 90` (`ok`)
-- `simple_evals.math = 100` (`ok`)
-- `simple_evals.science` is `missing` → value `0`
-- `reputation.stars = 40` (`ok`)
+- `simple-math.score = 100` (`ok`)
+- `simple-science.score` is `missing` → value `0`
+- `oss-popularity.stars = 40` (`ok`)
 
 **Adapter totals:**
 
 - `total(availability) = 90`
-- `total(simple_evals) = (100 + 0) / 2 = 50`
-- `total(reputation) = 40`
+- `total(simple-math) = 100`
+- `total(simple-science) = 0`
+- `total(oss-popularity) = 40`
 
 **Composite:**
 
 ```
-trustScore = (90*1 + 50*2 + 40*1) / (1 + 2 + 1)
-           = (90 + 100 + 40) / 4
-           = 57.5
+trustScore = (90*1 + 100*0.5 + 0*0.5 + 40*1) / (1 + 0.5 + 0.5 + 1)
+           = (90 + 50 + 0 + 40) / 3
+           = 60.00
 ```
 
 ### Test Vector 2: Sparse Signals Do Not Bias (Conditional Contribution)
 
-Same as Test Vector 1, except `reputation` uses `contributionMode: conditional` and produces no output:
+Same as Test Vector 1, except `oss-popularity` uses `contributionMode: conditional` and produces no output:
 
-- `reputation.stars` is `missing` → adapter returns no component map
+- `oss-popularity.stars` is `missing` → adapter returns no component map
 
-Then `reputation` is excluded from the denominator and:
+Then `oss-popularity` is excluded from the denominator and:
 
-- `trustScore = (90*1 + 50*2) / (1 + 2) = 63.33…` → `63.33` (rounded to 2 decimals).
+- `trustScore = (90*1 + 100*0.5 + 0*0.5) / (1 + 0.5 + 0.5) = 140 / 2 = 70.00` (rounded to 2 decimals).
 
 ## Conformance
 
