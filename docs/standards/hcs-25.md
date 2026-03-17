@@ -458,6 +458,8 @@ Then:
 trustScore = (Σ (total(a) * w(a))) / (Σ w(a))
 ```
 
+The result MUST be rounded to the same stable precision used for component values (see [Score Range and Rounding](#score-range-and-rounding)); RECOMMENDED: 2 decimal places.
+
 If `A_denominator` is empty, `trustScore` MUST be `0`.
 
 The composite score MUST be stored as `trustScores.total`. Implementations MAY also mirror it to a top-level `trustScore`.
